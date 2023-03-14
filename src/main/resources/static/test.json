@@ -32,10 +32,6 @@
       "lng": -79.820271,
       "routes": [
         {
-          "toId": 4,
-          "distance": 4.153
-        },
-        {
           "toId": 2,
           "distance": 3.847
         }
