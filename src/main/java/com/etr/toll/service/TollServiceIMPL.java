@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.etr.toll.exception.TollException;
@@ -26,6 +24,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class TollServiceIMPL implements ITollService {
+	
+	private String FILE_PATH ;
+	
+	public TollServiceIMPL() {
+		this.FILE_PATH = TollServiceConstantProvider.FILE_PATH;
+	}
+	
+	public TollServiceIMPL(String file) {
+		this.FILE_PATH = file;
+	}
 
 	private List<Location> locations = new ArrayList<>();
 	private List<LocationList> locationListReponse =  new ArrayList<>();
@@ -46,7 +54,7 @@ public class TollServiceIMPL implements ITollService {
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode rootNode;
 		try {
-			rootNode = objectMapper.readTree(new File(TollServiceConstantProvider.FILE_PATH));
+			rootNode = objectMapper.readTree(new File(FILE_PATH));
 		} catch (IOException e) {
 			throw new TollException(TollErrorType.FILE_NOT_FOUND, TollServiceConstantProvider.FILE_NOT_FOUND_ERROR_MSG);
 		}
