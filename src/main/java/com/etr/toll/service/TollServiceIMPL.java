@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.etr.toll.exception.TollException;
@@ -17,6 +19,7 @@ import com.etr.toll.model.LocationList;
 import com.etr.toll.model.Route;
 import com.etr.toll.model.TollRequest;
 import com.etr.toll.model.TollResponse;
+import com.etr.toll.utils.TollServiceConstantProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,8 +29,7 @@ public class TollServiceIMPL implements ITollService {
 
 	private List<Location> locations = new ArrayList<>();
 	private List<LocationList> locationListReponse =  new ArrayList<>();
-	private static final double TOLL_RATE_PER_KM = 0.25;
-
+	
 	public List<LocationList> getAllLocations() throws TollException{
 
 		locations = getLocationsFromJsonFile();
@@ -44,11 +46,11 @@ public class TollServiceIMPL implements ITollService {
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode rootNode;
 		try {
-			rootNode = objectMapper.readTree(new File("src/main/resources/static/interchanges.json"));
+			rootNode = objectMapper.readTree(new File(TollServiceConstantProvider.FILE_PATH));
 		} catch (IOException e) {
-			throw new TollException(TollErrorType.FILE_NOT_FOUND, "Invalid file path");
+			throw new TollException(TollErrorType.FILE_NOT_FOUND, TollServiceConstantProvider.FILE_NOT_FOUND_ERROR_MSG);
 		}
-		JsonNode locationsNode = rootNode.get("locations");
+		JsonNode locationsNode = rootNode.get(TollServiceConstantProvider.JSON_LOCATION_NODE);
 		Iterator<String> stringIterator = locationsNode.fieldNames();
 		try {
 			for (JsonNode locationNode : locationsNode)
@@ -73,17 +75,19 @@ public class TollServiceIMPL implements ITollService {
 		Location source = locations.stream()
 				.filter(location -> location.getId() == sourceId)
 				.findFirst()
-				.orElseThrow(() -> new TollException(TollErrorType.INVALID_LOCATION_IDS, "Invalid sorce id: " + sourceId));
+				.orElseThrow(() -> new TollException(TollErrorType.INVALID_LOCATION_IDS, 
+						TollServiceConstantProvider.INVALID_LOCATION_ID_MSG + sourceId));
 
 		Location destination = locations.stream()
 				.filter(location -> location.getId() == destinationId)
 				.findFirst()
-				.orElseThrow(() -> new TollException(TollErrorType.INVALID_LOCATION_IDS, "Invalid destination id: " + destinationId));
+				.orElseThrow(() -> new TollException(TollErrorType.INVALID_LOCATION_IDS,
+						TollServiceConstantProvider.INVALID_LOCATION_ID_MSG + destinationId));
 
 		double distanceInKm = 0;
 		distanceInKm = calculateDistanceInKm(source, destination, locations);
 
-		double tollAmount = TOLL_RATE_PER_KM * distanceInKm;	
+		double tollAmount = TollServiceConstantProvider.TOLL_RATE_PER_KM * distanceInKm;	
 
 		TollResponse response = new TollResponse();
 		response.setCost(tollAmount);
@@ -101,7 +105,7 @@ public class TollServiceIMPL implements ITollService {
 		visitedLocations.add(source.getId());
 
 		if(source.getId() == destination.getId()) 
-			throw new TollException(TollErrorType.ROUTE_NOT_FOUND, "Source Id and Destination Id are same");
+			throw new TollException(TollErrorType.ROUTE_NOT_FOUND, TollServiceConstantProvider.IDENTICAL_SOURCE_DESTINATION_MSG);
 		
 		while (source.getId() != destination.getId()) 
 		{
@@ -127,11 +131,11 @@ public class TollServiceIMPL implements ITollService {
 				source = locations.stream()
 						.filter(location -> location.getId() == route1.getToId())
 						.findFirst()
-						.orElseThrow(() -> new TollException(TollErrorType.LOCATION_NOT_FOUND,"Invalid location id: " + route1.getToId()));
+						.orElseThrow(() -> new TollException(TollErrorType.LOCATION_NOT_FOUND,
+								TollServiceConstantProvider.LOCATION_NOT_FOUND_MSG + route1.getToId()));
 			} else {
 				throw new TollException(
-						TollErrorType.ROUTE_NOT_FOUND, 
-						"No route found from location " + source.getDetails().getName() + " to " + destination.getDetails().getName());
+						TollErrorType.ROUTE_NOT_FOUND, TollServiceConstantProvider.NO_ROUTE_FOUND_MSG);
 			}
 		}
 
