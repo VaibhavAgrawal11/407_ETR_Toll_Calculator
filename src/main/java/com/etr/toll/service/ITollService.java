@@ -1,16 +1,16 @@
 package com.etr.toll.service;
 
-import java.io.IOException;
 import java.util.List;
 
+import com.etr.toll.exception.TollException;
 import com.etr.toll.model.LocationList;
 import com.etr.toll.model.TollRequest;
 import com.etr.toll.model.TollResponse;
 
 public interface ITollService {
 
-	List<LocationList> getAllLocations();
+	List<LocationList> getAllLocations() throws TollException;
 	
-	TollResponse calculateToll(TollRequest request) throws IOException;
+	TollResponse calculateToll(TollRequest request) throws TollException;
 
 }

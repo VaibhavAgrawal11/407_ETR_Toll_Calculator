@@ -5,7 +5,14 @@ public class TollResponse {
 	private String source;
 	private String destination;
 	private double cost;
+	private double distance;
 	
+	public double getDistance() {
+		return distance;
+	}
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
 	public String getSource() {
 		return source;
 	}
@@ -23,11 +30,6 @@ public class TollResponse {
 	}
 	public void setCost(double cost) {
 		this.cost = cost;
-	}
-	
-	@Override
-	public String toString() {
-		return "TollResponse [source=" + source + ", destination=" + destination + ", cost=" + cost + "]";
 	}
 
 	
