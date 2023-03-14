@@ -26,18 +26,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TollServiceIMPL implements ITollService {
 	
 	private String FILE_PATH ;
-	
-	public TollServiceIMPL() {
-		this.FILE_PATH = TollServiceConstantProvider.FILE_PATH;
-	}
-	
-	public TollServiceIMPL(String file) {
-		this.FILE_PATH = file;
-	}
+	public TollServiceIMPL() { this.FILE_PATH = TollServiceConstantProvider.FILE_PATH; }
+	public TollServiceIMPL(String file) { this.FILE_PATH = file; }
 
 	private List<Location> locations = new ArrayList<>();
 	private List<LocationList> locationListReponse =  new ArrayList<>();
 	
+	/**
+	 * Method to generate response of list of locations
+	 * @return List of Locations
+	 * @throws TollException
+	 */
 	public List<LocationList> getAllLocations() throws TollException{
 
 		locations = getLocationsFromJsonFile();
@@ -50,6 +49,11 @@ public class TollServiceIMPL implements ITollService {
 		return locationListReponse;
 	}
 
+	/**
+	 * Method to get Locations from JSON file
+	 * @return List of Locations
+	 * @throws TollException
+	 */
 	public List<Location> getLocationsFromJsonFile() throws TollException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode rootNode;
@@ -74,12 +78,19 @@ public class TollServiceIMPL implements ITollService {
 		return locations;
 	}
 
+	/**
+	 * Method to Provide Toll Details
+	 * @param Source and Destination
+	 * @return Toll Details
+	 * @throws TollException
+	 */
 	public TollResponse calculateToll(TollRequest request) throws TollException {
 
 		locations = getLocationsFromJsonFile();
 		int sourceId = request.getSourceId();
 		int destinationId = request.getDestinationId();
 
+		//Throw exception if the mentioned Id are not present in Location list
 		Location source = locations.stream()
 				.filter(location -> location.getId() == sourceId)
 				.findFirst()
@@ -106,12 +117,21 @@ public class TollServiceIMPL implements ITollService {
 		return response;
 	}
 
+	/**
+	 * Method to calculate distance between source and destination
+	 * @param source
+	 * @param destination
+	 * @param locations
+	 * @return Distance between Source and Destination
+	 * @throws TollException
+	 */
 	private static double calculateDistanceInKm(Location source, Location destination, List<Location> locations) throws TollException {
 
 		double totalDistance = 0.0;
 		List<Integer> visitedLocations = new ArrayList<>();
 		visitedLocations.add(source.getId());
 
+		//Throws Exception when both source and destination are same
 		if(source.getId() == destination.getId()) 
 			throw new TollException(TollErrorType.ROUTE_NOT_FOUND, TollServiceConstantProvider.IDENTICAL_SOURCE_DESTINATION_MSG);
 		
@@ -127,15 +147,19 @@ public class TollServiceIMPL implements ITollService {
 				visitedLocations.add(destination.getId());
 				break;
 			}
-
+			
+			//Check if current route id  present in visited locations
 			Optional<Route> optionalRoute = source.getDetails().getRoutes().stream()
 					.filter(r -> !visitedLocations.contains(r.getToId()))
 					.findFirst();
 
+			//If present then add to the total distance traveled
 			if (optionalRoute.isPresent()) {
 				Route route1 = optionalRoute.get();
 				totalDistance += route1.getDistance();
 				visitedLocations.add(route1.getToId());
+				//Check if added route is possible in the path
+				//If not, throw exception
 				source = locations.stream()
 						.filter(location -> location.getId() == route1.getToId())
 						.findFirst()

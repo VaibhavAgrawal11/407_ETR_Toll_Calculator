@@ -4,12 +4,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.Assert;
 
 import com.etr.toll.exception.TollException;
-import com.etr.toll.exception.TollException.TollErrorType;
 import com.etr.toll.model.LocationList;
 import com.etr.toll.model.TollRequest;
 import com.etr.toll.model.TollResponse;
