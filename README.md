@@ -18,8 +18,8 @@ To get started with this program, follow these steps:
 2. Navigate to the project root directory.
 'For this Projecct go to `{path}\407_ETR_Toll_Calculator-main\407_ETR_Toll_Calculator-main` 
 3. Now, we don't need to install Maven, as a maven wrappper is already provided in a Springboot project, Just open a command prompt and run `mvnw install` and Maven project should be successfully built in your folder with all the dependencies installed.
-- Make sure in you `jdk 1.8` or later version added in your `environment variables` otherwise the built will not be successfull.
-- After the successfull built you should see `target` folder in your directory.
+- Make sure in you `jdk 1.8` or later version added in your `environment variables` otherwise the built will not be successful.
+- After the successful built you should see `target` folder in your directory.
 3. Open a terminal or command prompt and run the command `mvnw spring-boot:run`.
 4. The program should start running on port 8080.
 5. To kill the server press `Ctrl + C`.
