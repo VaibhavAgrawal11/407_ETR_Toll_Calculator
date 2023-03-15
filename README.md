@@ -16,8 +16,13 @@ To get started with this program, follow these steps:
 
 1. Clone this repository to your local machine.
 2. Navigate to the project root directory.
-3. Open a terminal or command prompt and run the command `mvn spring-boot:run`.
+'For this Projecct go to `{path}\407_ETR_Toll_Calculator-main\407_ETR_Toll_Calculator-main` 
+3. Now, we don't need to install Maven, as a maven wrappper is already provided in a Springboot project, Just open a command prompt and run `mvnw install` and Maven project should be successfully built in your folder with all the dependencies installed.
+- Make sure in you `jdk 1.8` or later version added in your `environment variables` otherwise the built will not be successfull.
+- After the successfull built you should see `target` folder in your directory.
+3. Open a terminal or command prompt and run the command `mvnw spring-boot:run`.
 4. The program should start running on port 8080.
+5. To kill the server press `Ctrl + C`.
 
 ## Usage
 
@@ -52,7 +57,7 @@ If an IO exception occurs, the program will return an error with a message indic
 
 ## Testing
 
-This program includes JUnit tests for each of the methods. To run the tests, navigate to the project root directory and run the command `mvn test`.
+This program includes JUnit tests for each of the methods. To run the tests, navigate to the project root directory and run the command `mvnw test`.
 
 ## Sample API
 
